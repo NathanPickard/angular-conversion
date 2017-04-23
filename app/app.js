@@ -1,15 +1,14 @@
 angular.module('app', ['ngRoute'])
-  .config(function($routeProvider) {
+  .config(function ($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: 'app/tasks.html',
-      controller: 'TasksCtrl',
+      template: '<tasks tasks="$resolve.tasks"></tasks',
       resolve: {
-        resolvedTasks: function(Tasks) {
+        tasks: function (Tasks) {
           return Tasks.get();
         }
       }
     });
   }).
-  config(function($compileProvider) {
+  config(function ($compileProvider) {
     $compileProvider.preAssignBindingsEnabled(true);
   });
