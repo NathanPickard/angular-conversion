@@ -1,14 +1,24 @@
-angular.module('app').controller('TodoCtrl', function ($scope, $timeout) {
+angular.module('app').controller('TodoCtrl', function ($timeout) {
   var wayToGoPromise = undefined;
   var self = this;
+  var previousName;
 
-  $scope.$watch('todo', function () {
-    var name = self.todo.name;
-    self.formattedTodoName = name.charAt(0).toUpperCase()
-      + name.substring(1).toLowerCase();
-  });
+  self.$onChanges = function (changes) {
+    if (changes.todo) {
+      var name = self.todo.name;
+      self.formattedTodoName = name.charAt(0).toUpperCase()
+        + name.substring(1).toLowerCase();
+    }
+  };
 
-  $scope.$watch(() => self.todo.done, displayWayToGoMessage);
+  self.$doCheck = function () {
+    if (previousName !== self.todo.name) {
+      previousName = self.todo.name;
+
+      displayWayToGoMessage();
+    }
+
+  };
 
   function displayWayToGoMessage() {
     if (self.todo.done) {
@@ -28,8 +38,10 @@ angular.module('app').controller('TodoCtrl', function ($scope, $timeout) {
 angular.module('app').component('todo', {
   templateUrl: 'app/todo.html',
   bindings: {
-    todo: '<',
-    deleteTodo: '&'
+    todo: '<'
+  },
+  require: {
+    tasksCtrl: '^^tasks'
   },
   controller: 'TodoCtrl'
 });
