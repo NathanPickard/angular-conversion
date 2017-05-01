@@ -1,9 +1,22 @@
 angular.module('app').controller('TodoCtrl', function ($timeout) {
-  var wayToGoPromise = undefined;
   var self = this;
-  var previousName;
+  var wayToGoPromise = undefined;
+  var prevTodoDone = undefined;
 
-  self.$onChanges = function (changes) {
+  self.$onInit = function() {
+    console.log('todo initialized');
+  };
+
+  self.$doCheck = function () {
+    if (self.todo.done !== prevTodoDone) {
+      if (self.todo.done) {
+      displayWayToGoMessage();
+      }
+      prevTodoDone = self.todo.done;
+    }
+  };
+
+  self.$onChanges = function(changes) {
     if (changes.todo) {
       var name = self.todo.name;
       self.formattedTodoName = name.charAt(0).toUpperCase()
@@ -11,14 +24,10 @@ angular.module('app').controller('TodoCtrl', function ($timeout) {
     }
   };
 
-  self.$doCheck = function () {
-    if (previousName !== self.todo.name) {
-      previousName = self.todo.name;
-
-      displayWayToGoMessage();
-    }
-
+  self.$postLink = function() {
+    console.log('This runs after linking is done');
   };
+
 
   function displayWayToGoMessage() {
     if (self.todo.done) {
@@ -28,7 +37,7 @@ angular.module('app').controller('TodoCtrl', function ($timeout) {
         $timeout.cancel(wayToGoPromise);
       }
 
-      wayToGoPromise = $timeout(function () {
+      wayToGoPromise = $timeout(function() {
         self.showWayToGo = false;
       }, 1500);
     }
