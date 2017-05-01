@@ -3,24 +3,19 @@ describe('todo', function() {
 
   describe('todo controller', function() {
     var todoCtrl;
-    var scope;
 
-    beforeEach(inject(function($controller, $rootScope) {
-      scope = $rootScope.$new();
-
-      todoCtrl = $controller('TodoCtrl', {$scope: scope});
-    }));
-
-
-    it('should format name', inject(function($controller, $rootScope) {
-      scope.todo = {
+    it('should format name', inject(function($componentController, $rootScope) {
+      var todo = {
         name: 'name',
         done: false
       };
 
-      scope.$digest();
+      todoCtrl = $componentController('todo', {}, {todo: todo});
+      var changes = new StubChanges().addInitialChange('todo', todo).build();
+      todoCtrl.$onChanges(changes);
+      todoCtrl.$onInit();
 
-      expect(scope.formattedTodoName).toBe('Name');
+      expect(todoCtrl.formattedTodoName).toBe('Name');
     }));
   });
 });
